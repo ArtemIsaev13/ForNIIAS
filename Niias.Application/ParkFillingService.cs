@@ -1,9 +1,4 @@
 ﻿using Niias.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Niias.Application;
 
@@ -11,97 +6,136 @@ public static class ParkFillingService
 {
     public static List<RailwayPoint> FillPark(RailwayPark railwayPark)
     {
+        //Тут используем словарь потому что одна и таже точка может быть частью
+        //нескольких путей, поэтому обезопасим себя добавляя только уникальные точки
         Dictionary<Guid, RailwayPoint> parkPoints = new();
 
-        //самая северная и самая южная точки - они точно будут лежать на границе
-        //выпуклого многогранника, потому что у северной точки нет никого севернее
-        //её, чтобы мочь охватить её с севера. Аналогично для южной, восточной и западной
-        RailwayPoint southernmost = null; //точка с наименьшим Y
-        RailwayPoint northernmost = null; //точка с наибольшим Y
-        RailwayPoint eastermost = null; //точка с наибольшим X
-        RailwayPoint westermost = null; //точка с наименьшим X
+        //Сначала найдём все самые "восточные" точки.
+        double eastermostPointX = double.NegativeInfinity;
+        Dictionary<Guid, RailwayPoint> eastermostPoints = new();
 
-        //Собираем все точки в парке
+        //Собираем все точки в парке.
+        //Параллельно составляем список самых восточных из них
         foreach (var route in railwayPark.Routes)
         {
             foreach (var section in route.RailwaySections)
             {
-                foreach(var point in section.Points)
+                foreach (var point in section.Points)
                 {
                     if (!parkPoints.ContainsKey(point.Id))
                     {
-                        if(southernmost == null || point.Y < southernmost.Y)
-                        {
-                            southernmost = point;
-                        }
-                        if(northernmost == null || point.Y > northernmost.Y)
-                        {
-                            northernmost= point;
-                        }                        
-                        if(eastermost == null || point.X > eastermost.X)
-                        {
-                            eastermost = point;
-                        }
-                        if(westermost == null || point.X < westermost.X)
-                        {
-                            westermost = point;
-                        }
                         parkPoints.Add(point.Id, point);
+                    }
+
+                    //Ещё одна из наиболее восточных точек
+                    if(point.X == eastermostPointX)
+                    {
+                        if (!eastermostPoints.ContainsKey(point.Id))
+                        {
+                            eastermostPoints.Add(point.Id, point);
+                        }
+                    }
+                    //Если это новая самая восточная точка
+                    else if(point.X > eastermostPointX)
+                    {
+                        eastermostPoints.Clear();
+                        eastermostPoints.Add(point.Id, point);
+                        eastermostPointX = point.X;
                     }
                 }
             }
         }
 
-        //Если точек 3 и меньше, то все они лежат на границе области заливки.
-        //Просто возвращаем их
-        if(parkPoints.Count <= 3)
+        //если наивосточнейших точек несколько - берём из них самую наиюжную.
+        //Так как задача приближена к реальной будем считать, что в массиве самых восточных
+        //точек точек будет немного (скорее всего вообще только одна), поэтому используем
+        //встроенную сортировку
+        RailwayPoint startPoint = eastermostPoints.Values.OrderBy(p => p.Y).First();
+        //список уникальных точек, входящих в парк:
+        List<RailwayPoint> uniqueParkPoints = parkPoints.Values.ToList();
+
+        RailwayPoint currentPoint = startPoint;
+        RailwayPoint? prevPoint = null;
+        RailwayPoint? nextPoint = null;
+        List<RailwayPoint> result = [];
+
+        do 
         {
-            return parkPoints.Values.ToList();
+            //находим следующую точку
+            nextPoint = GetNearestPoint(currentPoint, prevPoint, uniqueParkPoints);
+            //добвляем в список результатов
+            result.Add(nextPoint);
+            prevPoint = currentPoint;
+            currentPoint = nextPoint;
+
+            uniqueParkPoints.Remove(nextPoint);
+            //пока следующая точка не окажется стартовой точкой - т.е. мы замкнули круг
+        } while (nextPoint != startPoint);
+
+        return result;
+    }
+
+    private static RailwayPoint GetNearestPoint(RailwayPoint currentPoint, RailwayPoint previousPoint, List<RailwayPoint> points)
+    {
+        //Идея такова:
+        //Берём текущую точку и выпускаем из неё луч.
+        //Для стартовой точки луч выпускаем параллельно оси X, для всех остальных -
+        //параллельно линии "предыдущая точка - текущая точка".
+        //Начинаем вращать этот луч по часовой стрелке пока он не коснётся какой-либо точки
+        //из пула точек. Это и есть наша следующая точка.
+
+        double startAngle = 0;
+        if(previousPoint != null)
+        {
+            startAngle = GetAngleToPoint(previousPoint, currentPoint);
         }
 
-        //Если самая южная и самая северная точка на самом деле лежат на одной широте
-        //то значит вообще все точки парка лежат на одной широте, а значит мы, вероятно, могли не найти
-        //крайние точки, а взяли какие-то случайные точки.
-        //В этом случае в качестве крайних точек возьмём восточную и западную.
-        RailwayPoint firstPoint = (southernmost!.Y == northernmost!.Y) ? southernmost! : eastermost!;
-        RailwayPoint secondPoint = (southernmost!.Y == northernmost!.Y) ? northernmost! : westermost!;
+        //Найдём точки из пула у которых угол между этим лучом и лучом "текущая точка - проверяемая точка"
+        //будет минимальным.
+        //Если нессколько точек лежат на одном луче - то точек c мин.углом может быть несколько
+        double minAngleDiff = double.PositiveInfinity;
+        List<RailwayPoint> currentNextPoint = [];
 
-        //уберём эти две точки из основного словаря и перенесём в словарь для точек, которые точно прошли 
-        //в точки заливки участка
-        Dictionary<Guid, RailwayPoint> borderPoints = new();
-        parkPoints.Remove(firstPoint.Id);
-        parkPoints.Remove(secondPoint.Id);
-        borderPoints.Add(firstPoint.Id, firstPoint);
-        borderPoints.Add(secondPoint.Id, secondPoint);
-
-        //Ищем самую удалённую от отрезка "северная точка - южная точка" точку
-        //Так как она наиболее удалена от отрезка никто не может её охватить - 
-        //поэтому она тоже будет лежать на границе заливки
-
-        //Сначала вычислим коэффициенты уравнения прямой на плоскости:
-        double lineParamA = secondPoint.Y - firstPoint.Y;
-        double lineParamB = secondPoint.X - firstPoint.X;
-        double lineParamC = firstPoint.Y * lineParamB - firstPoint.X * lineParamA;
-
-        //теперь найдём самую удалённую точку. Это будет третья точка границы
-        RailwayPoint thirdPoint = null;
-        double currentMaxDistance = -1;
-        foreach(var point in parkPoints)
+        foreach(RailwayPoint point in points)
         {
-            double currentDistance = GetRelativeDistance(point.Value, lineParamA, lineParamB, lineParamC);
-            if (currentDistance > currentMaxDistance)
+            if(currentPoint.Id == point.Id)
             {
-                currentMaxDistance = currentDistance;
-                thirdPoint = point.Value;
+                continue;
+            }
+
+            double currentAngle = GetAngleToPoint(currentPoint, point);
+            double currentAngleDifference = GetPositiveClockwiseAngleDifference(startAngle, currentAngle);
+
+            if(currentAngleDifference < minAngleDiff)
+            {
+                currentNextPoint.Clear();
+                currentNextPoint.Add(point);
+                minAngleDiff = currentAngleDifference;
+            }
+            else if(currentAngleDifference == minAngleDiff)
+            {
+                currentNextPoint.Add(point);
             }
         }
 
-        parkPoints.Remove(thirdPoint.Id);
-        borderPoints.Add(thirdPoint.Id, thirdPoint);
+        //На этом этапе у нас есть ряд точек, которые лежат на искомой стороне
+        //фигуры, описывающей заливку.
+        //Из этих точек мы можем выбрать самую  близкую - тогда алгоритм будет 
+        //работать дольше, но получит все точки. Или самую дальнюю - тогда алгоритм будет
+        //работать быстрее, и набор точек будет минимальным.
+        //В принципе, можно вообще любую выбрать, заданию это будет соответствовать.
 
-        return null;
+        //Найдём, всё-таки, самую дальнюю:
+        return currentNextPoint.OrderBy(p => p.GetDistance(currentPoint)).Last();
     }
 
+    /// <summary>
+    /// Возвращает угол между осью Х и лучом "currentPoint - nextPoint"
+    /// От 0 до 360 градусов
+    /// </summary>
+    /// <param name="currentPoint"></param>
+    /// <param name="nextPoint"></param>
+    /// <returns></returns>
     private static double GetAngleToPoint(RailwayPoint currentPoint, RailwayPoint nextPoint)
     {
         var y = nextPoint.Y - currentPoint.Y;
@@ -115,20 +149,17 @@ public static class ParkFillingService
         return angle;
     }
 
-
     /// <summary>
-    /// Относительное расстояние от точки до прямой.
-    /// В формуле расстояния ещё есть знаменатель, но он тут упразднён потому что 
-    /// для всех точек он будет одинаковым и на сравнение не повлияет
+    /// Возвращает положительную разницу двух углов.
+    /// При значении параметров from = 350, to = 10 вернёт 20
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <param name="c"></param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
     /// <returns></returns>
-    private static double GetRelativeDistance(RailwayPoint point, double a, double b, double c)
+    private static double GetPositiveClockwiseAngleDifference(double from, double to)
     {
-        return Math.Abs(a * point.X + b * point.Y + c);
+        //331 127
+        double result = to - from;
+        return (result < 0) ? (360 + result) : result;
     }
-
 }

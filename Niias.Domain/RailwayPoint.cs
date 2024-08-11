@@ -18,4 +18,22 @@ public class RailwayPoint
         Y = y;
         RailwaySections = railwaySections;
     }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null) 
+        { 
+            return false; 
+        }
+        if (obj is RailwayPoint) 
+        { 
+            return Equals(Id, ((RailwayPoint)obj).Id); 
+        }
+        return false;
+    }
 }
