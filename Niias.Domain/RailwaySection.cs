@@ -7,17 +7,21 @@ public class RailwaySection
 {
     public Guid Guid { get; init; }
 
-    public RailwayPoint[] Points { get; }
+    public RailwayPoint[] Points => [PointA, PointB];
+
+    public RailwayPoint PointA { get; init; }
+    public RailwayPoint PointB {  get; init; }
 
     public RailwaySection(Guid guid, RailwayPoint pointA, RailwayPoint pointB)
     {
         Guid = guid;
-        Points = [pointA, pointB];
+        PointA = pointA; 
+        PointB = pointB;
         if (!pointA.RailwaySections.Any(x => x.Guid == Guid))
         {
             pointA.RailwaySections.Add(this);
         }
-        if (!pointA.RailwaySections.Any(x => x.Guid == Guid))
+        if (!pointB.RailwaySections.Any(x => x.Guid == Guid))
         {
             pointB.RailwaySections.Add(this);
         }
