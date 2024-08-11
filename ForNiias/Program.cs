@@ -10,6 +10,7 @@ internal class Program
     {
         RailwayScheme railwayScheme =  (new HardcodedRailwaySchemeProvider()).GetRailwayPark();
 
+        /*
         foreach(var park in railwayScheme.RailwayParks)
         {
             WriteSeparator();
@@ -21,6 +22,25 @@ internal class Program
             {
                 Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
             }
+        }
+        */
+
+        /*
+        var shortestWay = PathFinderService.GetShortestPath(railwayScheme, railwayScheme.RailwayPoints[17], railwayScheme.RailwayPoints[12]);
+        foreach (var point in shortestWay)
+        {
+            Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
+        }
+        */
+
+        var shortestWay = PathFinderService.GetShortestPath(railwayScheme, railwayScheme.RailwayPoints[0], railwayScheme.RailwayPoints[5]);
+        foreach (var point in shortestWay)
+        {
+            Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
+        }
+        if(shortestWay.Count == 0)
+        {
+            Console.WriteLine("There is no way.");
         }
 
         WriteSeparator();

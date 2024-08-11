@@ -1,9 +1,16 @@
-﻿using Niias.Domain;
+﻿using Niias.Application.DomainExtentions;
+using Niias.Domain;
 
 namespace Niias.Application;
 
+//TODO: Сделать соответствующий интерфейс
 public static class ParkFillingService
 {
+    /// <summary>
+    /// Возвращает вершины фигуры, описывающей все точки парка
+    /// </summary>
+    /// <param name="railwayPark"></param>
+    /// <returns></returns>
     public static List<RailwayPoint> FillPark(RailwayPark railwayPark)
     {
         //Тут используем словарь потому что одна и таже точка может быть частью
