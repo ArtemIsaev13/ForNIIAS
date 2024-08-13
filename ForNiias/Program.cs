@@ -9,7 +9,7 @@ internal class Program
 {
     public static void Main()
     {
-        RailwayScheme railwayScheme =  (new HardcodedRailwaySchemeProvider()).GetRailwayPark();
+        RailwayScheme railwayScheme =  (new HardcodedRailwaySchemeProvider()).GetRailwayScheme();
 
         foreach(var park in railwayScheme.RailwayParks)
         {

@@ -4,7 +4,7 @@ namespace Niias.Application;
 
 public static class PathFinderService
 {
-    public static List<RailwaySection> GetShortestPath(RailwayScheme railwayScheme, RailwaySection from, RailwaySection to)
+    public static List<RailwaySection>? GetShortestPath(RailwayScheme railwayScheme, RailwaySection from, RailwaySection to)
     {
         List<PathUnit> pathUnits = [];
 
@@ -13,6 +13,11 @@ public static class PathFinderService
         pathUnits.AddRange(GetShortestPath(railwayScheme, from.PointB, to.PointA, to.PointB));
 
         var bestUnit = pathUnits.OrderBy(u => u.Length).First();
+
+        if(bestUnit.Length == double.PositiveInfinity) 
+        {
+            return null;
+        }
 
         return bestUnit.PathBySections;
     }
