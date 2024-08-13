@@ -8,12 +8,14 @@ public class RailwayPoint
     public Guid Id { get; init; }
     public double X { get; init; }
     public double Y { get; init; }
+    public string Name { get; init; }
 
     public List<RailwaySection> RailwaySections { get; init; }
 
-    public RailwayPoint(Guid id, double x, double y, List<RailwaySection> railwaySections)
+    public RailwayPoint(Guid id, string name, double x, double y, List<RailwaySection> railwaySections)
     {
         Id = id;
+        Name = name;
         X = x;
         Y = y;
         RailwaySections = railwaySections;

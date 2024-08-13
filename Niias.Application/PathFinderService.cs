@@ -1,15 +1,22 @@
-﻿using Niias.Application.DomainExtentions;
-using Niias.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Niias.Domain;
 
 namespace Niias.Application;
 
 public static class PathFinderService
 {
+    public static List<RailwaySection> GetShortestPath(RailwayScheme railwayScheme, RailwaySection from, RailwaySection to)
+    {
+        List<PathUnit> pathUnits = [];
+
+        //с каждого конца секции найдём путь до каждого конца второй секции - итого 4 пути
+        pathUnits.AddRange(GetShortestPath(railwayScheme, from.PointA, to.PointA, to.PointB));
+        pathUnits.AddRange(GetShortestPath(railwayScheme, from.PointB, to.PointA, to.PointB));
+
+        var bestUnit = pathUnits.OrderBy(u => u.Length).First();
+
+        return bestUnit.PathBySections;
+    }
+
     /// <summary>
     /// Возвращает кратчайший путь в виде списка 
     /// </summary>
@@ -17,7 +24,7 @@ public static class PathFinderService
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns></returns>
-    public static List<RailwayPoint> GetShortestPath(RailwayScheme railwayScheme, RailwayPoint from, RailwayPoint to)
+    private static List<PathUnit> GetShortestPath(RailwayScheme railwayScheme, RailwayPoint from, RailwayPoint to1, RailwayPoint to2)
     {
         //Дейкстра
         Dictionary<Guid, PathUnit> pathUnits = [];
@@ -38,7 +45,7 @@ public static class PathFinderService
         //Алгоритм поиска
         while(true)
         {
-            currentUnit.Path.Add(currentUnit.Point);
+            currentUnit.PathByPoints.Add(currentUnit.Point);
             //Для всех соседних точек обновляем веса
             foreach(var section in currentUnit.Point.RailwaySections)
             {
@@ -53,7 +60,9 @@ public static class PathFinderService
                 if(currentUnit.Length + sectionLength < nextPathUnit.Length)
                 {
                     nextPathUnit.Length = currentUnit.Length + sectionLength;
-                    nextPathUnit.Path = currentUnit.Path.ToList();
+                    nextPathUnit.PathByPoints = currentUnit.PathByPoints.ToList();
+                    nextPathUnit.PathBySections = currentUnit.PathBySections.ToList();
+                    nextPathUnit.PathBySections.Add(section);
                 }
             }
             currentUnit.IsChecked = true;
@@ -70,7 +79,7 @@ public static class PathFinderService
             }
         }
 
-        return pathUnits[to.Id].Path;
+        return [pathUnits[to1.Id], pathUnits[to2.Id]];
     }
 
     private static Guid? GetSmollestUnchecheckedUnitId(List<PathUnit> pathUnits)
@@ -90,11 +99,11 @@ public static class PathFinderService
         return guid;
     }
 
-
     private class PathUnit
     {
         public double Length = double.PositiveInfinity;
-        public List<RailwayPoint> Path = [];
+        public List<RailwayPoint> PathByPoints = [];
+        public List<RailwaySection> PathBySections = [];
         public RailwayPoint Point { get; init; }
         public bool IsChecked = false;
 

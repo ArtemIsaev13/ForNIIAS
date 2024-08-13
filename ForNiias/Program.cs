@@ -1,4 +1,5 @@
 ﻿using Niias.Application;
+using Niias.Application.DomainExtentions;
 using Niias.Domain;
 using Niias.Infrastructure.HardcodedParkProvider;
 
@@ -10,42 +11,33 @@ internal class Program
     {
         RailwayScheme railwayScheme =  (new HardcodedRailwaySchemeProvider()).GetRailwayPark();
 
-        /*
         foreach(var park in railwayScheme.RailwayParks)
         {
             WriteSeparator();
-            Console.WriteLine($"Filling for \"{park.Name}\" park");
+            var allParkPoints = park.GetAllPoints();
+            Console.WriteLine($"Park name: \"{park.Name}\". There are {allParkPoints.Count} points in the park:");
 
-            List<RailwayPoint> points = ParkFillingService.FillPark(park);
-
-            foreach(var point in points)
+            for(int i = 0; i < allParkPoints.Count; i++)
             {
-                Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
+                WritePoint(allParkPoints[i], i);
             }
-        }
-        */
 
-        /*
-        var shortestWay = PathFinderService.GetShortestPath(railwayScheme, railwayScheme.RailwayPoints[17], railwayScheme.RailwayPoints[12]);
-        foreach (var point in shortestWay)
-        {
-            Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
-        }
-        */
-
-        var shortestWay = PathFinderService.GetShortestPath(railwayScheme, railwayScheme.RailwayPoints[0], railwayScheme.RailwayPoints[5]);
-        foreach (var point in shortestWay)
-        {
-            Console.WriteLine($"Point {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
-        }
-        if(shortestWay.Count == 0)
-        {
-            Console.WriteLine("There is no way.");
+            List<RailwayPoint> pointsFromFilling = ParkFillingService.FillPark(park);
+            Console.WriteLine($"\nFilling for \"{park.Name}\" park (contains {pointsFromFilling.Count} points):");
+            for(int i = 0; i <pointsFromFilling.Count; i++)
+            {
+                WritePoint(pointsFromFilling[i], i);
+            }
         }
 
         WriteSeparator();
         Console.WriteLine("Press any key to exit.");
         Console.ReadKey();
+    }
+
+    private static void WritePoint(RailwayPoint point, int num)
+    {
+        Console.WriteLine($"Point #{num}: Name = {point.Name}, X = {point.X:f2}, Y = {point.Y:f2}");
     }
 
     private static void WriteSeparator()
