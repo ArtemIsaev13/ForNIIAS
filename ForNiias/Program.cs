@@ -15,7 +15,7 @@ internal class Program
         {
             WriteSeparator();
             var allParkPoints = park.GetAllPoints();
-            Console.WriteLine($"Park name: \"{park.Name}\". There are {allParkPoints.Count} points in park:");
+            Console.WriteLine($"Park name: \"{park.Name}\". There are {allParkPoints.Count} points in the park:");
 
             for(int i = 0; i < allParkPoints.Count; i++)
             {
@@ -37,7 +37,7 @@ internal class Program
 
     private static void WritePoint(RailwayPoint point, int num)
     {
-        Console.WriteLine($"Point #{num}: Id = {point.Id}, X = {point.X:f2}, Y = {point.Y:f2}");
+        Console.WriteLine($"Point #{num}: Name = {point.Name}, X = {point.X:f2}, Y = {point.Y:f2}");
     }
 
     private static void WriteSeparator()

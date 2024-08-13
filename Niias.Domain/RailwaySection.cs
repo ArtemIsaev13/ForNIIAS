@@ -7,14 +7,17 @@ public class RailwaySection
 {
     public Guid Guid { get; init; }
 
+    public string Name { get; init; }
+
     public RailwayPoint[] Points => [PointA, PointB];
 
     public RailwayPoint PointA { get; init; }
     public RailwayPoint PointB {  get; init; }
 
-    public RailwaySection(Guid guid, RailwayPoint pointA, RailwayPoint pointB)
+    public RailwaySection(Guid guid, string name, RailwayPoint pointA, RailwayPoint pointB)
     {
         Guid = guid;
+        Name = name;
         PointA = pointA; 
         PointB = pointB;
         if (!pointA.RailwaySections.Any(x => x.Guid == Guid))

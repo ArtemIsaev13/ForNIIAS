@@ -14,7 +14,7 @@ internal class Program
 
         for(int i = 0; i < railwayScheme.RailwaySections.Count; i++)
         {
-            Console.WriteLine($"Section #[{i + 1}] Guid = {railwayScheme.RailwaySections[i].Guid}");
+            WriteSection(i, railwayScheme.RailwaySections[i]);
         }
 
         Console.WriteLine();
@@ -22,8 +22,8 @@ internal class Program
         int to = -1;
         Console.WriteLine("Let's find shortest way!");
         Console.WriteLine("Enter the start section number:");
-        string fromStr = Console.ReadLine();
-        if(!Int32.TryParse(fromStr, out from) || from < 1 || from > railwayScheme.RailwaySections.Count)
+        string? fromStr = Console.ReadLine();
+        if(fromStr is null || !Int32.TryParse(fromStr, out from) || from < 1 || from > railwayScheme.RailwaySections.Count)
         {
             Console.WriteLine("Wrong number! Press any key to exit...");
             Console.ReadKey();
@@ -31,15 +31,17 @@ internal class Program
         }
 
         Console.WriteLine("Enter the destination section number:");
-        string toStr = Console.ReadLine();
-        if (!Int32.TryParse(toStr, out to) || to < 1 || to > railwayScheme.RailwaySections.Count)
+        string? toStr = Console.ReadLine();
+        if (toStr is null || !Int32.TryParse(toStr, out to) || to < 1 || to > railwayScheme.RailwaySections.Count)
         {
             Console.WriteLine("Wrong number! Press any key to exit...");
             Console.ReadKey();
             return;
         }
 
-        var shortestWay = PathFinderService.GetShortestPath(railwayScheme, railwayScheme.RailwaySections[from], railwayScheme.RailwaySections[to]);
+        var shortestWay = 
+            PathFinderService
+            .GetShortestPath(railwayScheme, railwayScheme.RailwaySections[from], railwayScheme.RailwaySections[to]);
 
         if (shortestWay.Count == 0)
         {
@@ -50,10 +52,9 @@ internal class Program
             Console.WriteLine($"The shortest way contains {shortestWay.Count} sections:");
             for (int i = 0; i < shortestWay.Count; i++)
             {
-                Console.WriteLine($"Section #{i}: Id - {shortestWay[i].Guid}");
+                WriteSection(i, shortestWay[i]);
             }
         }
-
 
         WriteSeparator();
         Console.WriteLine("Press any key to exit.");
@@ -63,5 +64,13 @@ internal class Program
     private static void WriteSeparator()
     {
         Console.WriteLine(new String('-', 100));
+    }
+
+    private static void WriteSection(int num, RailwaySection railwaySection)
+    {
+        Console
+            .WriteLine($"Section #[{num}]: " +
+            $"Name = {railwaySection.Name}, " +
+            $"Id = {railwaySection.Guid}");
     }
 }

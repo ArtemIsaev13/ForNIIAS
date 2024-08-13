@@ -1,10 +1,4 @@
-﻿using Niias.Application.DomainExtentions;
-using Niias.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Niias.Domain;
 
 namespace Niias.Application;
 
@@ -67,6 +61,7 @@ public static class PathFinderService
                 {
                     nextPathUnit.Length = currentUnit.Length + sectionLength;
                     nextPathUnit.PathByPoints = currentUnit.PathByPoints.ToList();
+                    nextPathUnit.PathBySections = currentUnit.PathBySections.ToList();
                     nextPathUnit.PathBySections.Add(section);
                 }
             }
