@@ -1,11 +1,11 @@
-﻿using Niias.Application.Interfaces;
+using Niias.Application.Interfaces;
 using Niias.Domain;
 
 namespace Niias.Infrastructure.HardcodedParkProvider;
 
 public class HardcodedRailwaySchemeProvider : IRailwaySchemeProvider
 {
-    public RailwayScheme GetRailwayPark()
+    public RailwayScheme GetRailwayScheme()
     {
         //Карту можно найти по пути Images/RailwayScheme.png
         //Обратите внимание, что на карте ось Y направлена вниз чтобы координаты

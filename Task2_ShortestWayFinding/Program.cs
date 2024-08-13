@@ -8,7 +8,7 @@ internal class Program
 {
     public static void Main()
     {
-        RailwayScheme railwayScheme = (new HardcodedRailwaySchemeProvider()).GetRailwayPark();
+        RailwayScheme railwayScheme = (new HardcodedRailwaySchemeProvider()).GetRailwayScheme();
 
         Console.WriteLine($"There are {railwayScheme.RailwaySections.Count} sections in scheme:");
 

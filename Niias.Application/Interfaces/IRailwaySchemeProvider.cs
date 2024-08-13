@@ -4,5 +4,5 @@ namespace Niias.Application.Interfaces;
 
 public interface IRailwaySchemeProvider
 {
-    public RailwayScheme GetRailwayPark();
+    public RailwayScheme GetRailwayScheme();
 }

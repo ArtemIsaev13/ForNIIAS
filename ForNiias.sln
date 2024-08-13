@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Niias.Application", "Niias.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task2_ShortestWayFinding", "Task2_ShortestWayFinding\Task2_ShortestWayFinding.csproj", "{426D796F-FD7F-4818-B818-A70881121399}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Niias.Infrastructure.HardcodedRailwaySchemeProvider.Tests", "Niias.Infrastructure.HardcodedRailwaySchemeProvider.Tests\Niias.Infrastructure.HardcodedRailwaySchemeProvider.Tests.csproj", "{B6C763B2-AE79-4401-BB21-DEB558C8FE23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{426D796F-FD7F-4818-B818-A70881121399}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{426D796F-FD7F-4818-B818-A70881121399}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{426D796F-FD7F-4818-B818-A70881121399}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6C763B2-AE79-4401-BB21-DEB558C8FE23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6C763B2-AE79-4401-BB21-DEB558C8FE23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6C763B2-AE79-4401-BB21-DEB558C8FE23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6C763B2-AE79-4401-BB21-DEB558C8FE23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
