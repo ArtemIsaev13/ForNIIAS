@@ -1,4 +1,4 @@
-﻿using Niias.Application;
+using Niias.Application;
 using Niias.Domain;
 using Niias.Infrastructure.HardcodedParkProvider;
 
@@ -23,7 +23,7 @@ internal class Program
         Console.WriteLine("Let's find shortest way!");
         Console.WriteLine("Enter the start section number:");
         string? fromStr = Console.ReadLine();
-        if(fromStr is null || !int.TryParse(fromStr, out from) || from < 1 || from > railwayScheme.RailwaySections.Count)
+        if(fromStr is null || !int.TryParse(fromStr, out from) || from < 0 || from >= railwayScheme.RailwaySections.Count)
         {
             Console.WriteLine("Wrong number! Press any key to exit...");
             Console.ReadKey();
@@ -32,7 +32,7 @@ internal class Program
 
         Console.WriteLine("Enter the destination section number:");
         string? toStr = Console.ReadLine();
-        if (toStr is null || !int.TryParse(toStr, out to) || to < 1 || to > railwayScheme.RailwaySections.Count)
+        if (toStr is null || !int.TryParse(toStr, out to) || to < 0 || to >= railwayScheme.RailwaySections.Count)
         {
             Console.WriteLine("Wrong number! Press any key to exit...");
             Console.ReadKey();
@@ -43,9 +43,13 @@ internal class Program
             PathFinderService
             .GetShortestPath(railwayScheme, railwayScheme.RailwaySections[from], railwayScheme.RailwaySections[to]);
 
-        if (shortestWay.Count == 0)
+        if(shortestWay == null) 
         {
             Console.WriteLine("There is no way.");
+        }
+        else if (shortestWay.Count == 0)
+        {
+            Console.WriteLine("These section are adjacent.");
         }
         else
         {
@@ -69,7 +73,7 @@ internal class Program
     private static void WriteSection(int num, RailwaySection railwaySection)
     {
         Console
-            .WriteLine($"Section #[{num}]: " +
+            .WriteLine($"Section #{num}: " +
             $"Name = {railwaySection.Name}, " +
             $"Id = {railwaySection.Guid}");
     }
