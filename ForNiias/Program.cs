@@ -7,7 +7,7 @@ namespace ForNiias;
 
 internal class Program
 {
-    static void Main(string[] args)
+    public static void Main()
     {
         RailwayScheme railwayScheme =  (new HardcodedRailwaySchemeProvider()).GetRailwayPark();
 
@@ -42,6 +42,6 @@ internal class Program
 
     private static void WriteSeparator()
     {
-        Console.WriteLine(new String('-', 100));
+        Console.WriteLine(new string('-', 100));
     }
 }
