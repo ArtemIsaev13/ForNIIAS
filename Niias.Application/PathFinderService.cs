@@ -1,4 +1,4 @@
-﻿using Niias.Domain;
+using Niias.Domain;
 
 namespace Niias.Application;
 
@@ -101,11 +101,11 @@ public static class PathFinderService
 
     private class PathUnit
     {
-        public double Length = double.PositiveInfinity;
-        public List<RailwayPoint> PathByPoints = [];
-        public List<RailwaySection> PathBySections = [];
+        public double Length { get; set; } = double.PositiveInfinity;
+        public List<RailwayPoint> PathByPoints { get; set; } = [];
+        public List<RailwaySection> PathBySections { get; set; } = [];
         public RailwayPoint Point { get; init; }
-        public bool IsChecked = false;
+        public bool IsChecked { get; set; } = false;
 
         public PathUnit(RailwayPoint destination)
         {

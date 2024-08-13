@@ -1,4 +1,4 @@
-﻿namespace Niias.Domain;
+namespace Niias.Domain;
 
 /// <summary>
 /// Точки, ограничивающие участки пути
@@ -32,9 +32,9 @@ public class RailwayPoint
         { 
             return false; 
         }
-        if (obj is RailwayPoint) 
+        if (obj is RailwayPoint point) 
         { 
-            return Equals(Id, ((RailwayPoint)obj).Id); 
+            return Equals(Id, point.Id); 
         }
         return false;
     }

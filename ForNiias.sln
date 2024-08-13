@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Niias.Infrastructure.Hardco
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Niias.Application", "Niias.Application\Niias.Application.csproj", "{97B22B22-E938-4964-BF32-88EBE6FA48C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task2_ShortestWayFinding", "Task2_ShortestWayFinding\Task2_ShortestWayFinding.csproj", "{426D796F-FD7F-4818-B818-A70881121399}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task2_ShortestWayFinding", "Task2_ShortestWayFinding\Task2_ShortestWayFinding.csproj", "{426D796F-FD7F-4818-B818-A70881121399}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

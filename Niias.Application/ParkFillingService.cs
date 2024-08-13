@@ -1,4 +1,4 @@
-﻿using Niias.Application.DomainExtentions;
+using Niias.Application.DomainExtentions;
 using Niias.Domain;
 
 namespace Niias.Application;
@@ -59,7 +59,7 @@ public static class ParkFillingService
         //встроенную сортировку
         RailwayPoint startPoint = eastermostPoints.Values.OrderBy(p => p.Y).First();
         //список уникальных точек, входящих в парк:
-        List<RailwayPoint> uniqueParkPoints = parkPoints.Values.ToList();
+        var uniqueParkPoints = parkPoints.Values.ToList();
 
         RailwayPoint currentPoint = startPoint;
         RailwayPoint? prevPoint = null;
@@ -82,7 +82,7 @@ public static class ParkFillingService
         return result;
     }
 
-    private static RailwayPoint GetNearestPoint(RailwayPoint currentPoint, RailwayPoint previousPoint, List<RailwayPoint> points)
+    private static RailwayPoint GetNearestPoint(RailwayPoint currentPoint, RailwayPoint? previousPoint, List<RailwayPoint> points)
     {
         //Идея такова:
         //Берём текущую точку и выпускаем из неё луч.

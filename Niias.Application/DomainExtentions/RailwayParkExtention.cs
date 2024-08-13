@@ -1,4 +1,4 @@
-﻿using Niias.Domain;
+using Niias.Domain;
 
 namespace Niias.Application.DomainExtentions;
 
